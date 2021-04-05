@@ -13,7 +13,7 @@ options.add_argument("headless")
 
 client = discord.Client()
 prefix = "^"
-token = "ODI4NTcwNDMzMjU0OTgxNjMy.YGrgWQ.pPRsz_GoVhrVkWQD_TDaXgNtGK4"
+token = "your token"
 
 
 @client.event
