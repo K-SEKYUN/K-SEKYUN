@@ -1,0 +1,109 @@
+import discord
+import asyncio
+import os
+import random
+import bs4
+import requests
+
+from selenium import webdriver
+
+options = webdriver.ChromeOptions()
+
+options.add_argument("headless")
+
+client = discord.Client()
+prefix = "^"
+token = "ODI4NTcwNDMzMjU0OTgxNjMy.YGrgWQ.pPRsz_GoVhrVkWQD_TDaXgNtGK4"
+
+
+@client.event
+async def on_ready():
+    print(client.user.name)
+    print(client.user.id)
+    print("System login!")
+    print("==============")
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name="Omoi - グリーンライツ・セレナーデ"))
+
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        return None
+    #mention = "<@{}>".format(message.author.name)
+    #print(mention,message.content)
+
+    #Message Commands
+    if message.content == f"{prefix}안녕" or message.content == f"{prefix}안녕" or message.content == f"{prefix}안녕":
+        bot_response=random.randint(1,3)
+
+        if bot_response == 1:
+            if message.content == f"{prefix}안녕":
+                await message.channel.send('반가워~')
+        if bot_response == 2:
+            if message.content == f"{prefix}안녕":
+                await message.channel.send('어서와~')
+        if bot_response == 3:
+            if message.content == f"{prefix}안녕":
+                await message.channel.send('안녕~~')
+
+    if message.content == f"{prefix}잔다":
+        await message.channel.send('잘자~~')
+
+    #Embed Commands
+    if message.content == f"{prefix}도움말" or message.content == f"{prefix}help":
+        embed = discord.Embed(title='도움말', description='도움이 필요할때 ```^도움말 or ^help``` 라고 해주세요!!', color = 0x39c5bb)
+        embed.add_field(name='```^가사검색```', value='보카로 가사 검색을 할수 있습니다', inline=True)
+        embed.set_footer(text='미쿠를 부르고 싶다면 ^로 불러주세요!!')
+
+        embed.set_thumbnail(url="https://media.discordapp.net/attachments/828467375337766962/828581378827485275/1.jpg?width=465&height=491")
+        await message.channel.send(embed=embed)
+
+    #Image Commands
+    if message.content == f"{prefix}39" or message.content == f"{prefix}39" or message.content == f"{prefix}39":
+        bot_response = random.randint(1, 3)
+
+        if bot_response == 1:
+            if message.content == f"{prefix}39":
+                await message.channel.send(file=discord.File("miku.jpg"))
+        if bot_response == 2:
+            if message.content == f"{prefix}39":
+                await message.channel.send(file=discord.File("miku2.png"))
+        if bot_response == 3:
+            if message.content == f"{prefix}39":
+                await message.channel.send(file=discord.File("miku3.jpg"))
+
+    #Search Commands(보카로 가사위키)
+    if message.content.startswith(f'{prefix}가사검색'):
+        learn = message.content.split(" ")
+        Text = ""
+        vrsize = len(learn)
+        vrsize = int(vrsize)
+        for i in range(1, vrsize):
+            Text = Text + " " + learn[i]
+        encText = Text
+
+        chromedriver_dir = r'C:\Users\김세균\Desktop\MIKU.BOT\chromedriver.exe'
+        driver = webdriver.Chrome(chromedriver_dir, options=options)
+        driver.get('https://cse.google.com/cse?cx=010798177249342776914:8madl3htvdg&q=' + encText)
+        source = driver.page_source
+        bs = bs4.BeautifulSoup(source, 'lxml')
+        entire = bs.find_all('a', {'class': 'gs-title'})
+
+        embed = discord.Embed(title="가사 검색!", color = 0x39c5bb)
+
+        for i in range(0, 1):
+            entireNum = entire[i]
+            entireText = entireNum.text.strip()
+            print(entireText)
+            hyperlink = entireNum.get('href')
+            print(hyperlink)
+            rink = '' + hyperlink
+            embed.add_field(name="가사 검색 결과", value=entireText + '\n링크 : ' + rink)
+            embed.set_footer(text="보카로 가사위키 : http://vocaro.wikidot.com/")
+            embed.set_thumbnail(url='https://media.discordapp.net/attachments/828584254384111618/828669784748982312/Vocaloid_Lyrics_icon.png')
+
+        await message.channel.send(embed=embed)
+
+        driver.quit()
+
+
+client.run(token)
